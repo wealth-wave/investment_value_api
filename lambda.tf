@@ -1,6 +1,6 @@
 data "archive_file" "lambda_zip" {
   type        = "zip"
-  source_file = "index.ts"
+  source_file = "dist/index.js"
   output_path = "lambda_function.zip"
 }
 
@@ -24,12 +24,17 @@ resource "aws_iam_role" "lambda_exec" {
 EOF
 }
 
-resource "aws_lambda_function" "example" {
+resource "aws_lambda_function" "investment_api_lambda" {
   filename      = data.archive_file.lambda_zip.output_path
   function_name = "investment_api_lambda"
   role          = aws_iam_role.lambda_exec.arn
   handler       = "index.handler"
-  runtime       = "nodejs12.x"
+  runtime       = "nodejs18.x"
 
   source_code_hash = data.archive_file.lambda_zip.output_base64sha256
+}
+
+resource "aws_iam_role_policy_attachment" "lambda_exec_policy_attachment" {
+  role       = aws_iam_role.lambda_exec.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
 }

@@ -8,6 +8,7 @@ This project contains a lambda function to fetch investment values from differen
 
 ```bash
 mv env.sh.template env.sh
+tsc index.ts
 ```
 
 2. Open env.sh and replace "your_alpha_vantage_api_key" and "your_another_secret_key" with your actual secret keys.
