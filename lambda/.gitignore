@@ -9,17 +9,8 @@
 
 # misc
 .DS_Store
-env.sh
 .env
 *.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-
-# Terraform
-.terraform/
-*.tfstate
-*.tfstate.*
-*.tfvars
-*.tfvars.*
-crash.log

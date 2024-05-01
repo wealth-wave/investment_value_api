@@ -7,26 +7,16 @@ This project contains a lambda function to fetch investment values from differen
 1. Rename `env.sh.template` to `env.sh` and update it with your actual secret keys.
 
 ```bash
-mv env.sh.template env.sh
+cd lambda
 tsc index.ts
 ```
 
-2. Open env.sh and replace "your_alpha_vantage_api_key" and "your_another_secret_key" with your actual secret keys.
-
-```bash
-export TF_VAR_alpha_vantage_api_key="your_alpha_vantage_api_key"
-export TF_VAR_another_secret_key="your_another_secret_key"
-```
-
-3. Source the environment variables file before running Terraform commands:
-```bash
-source env.sh
-```
 
 ## Deployment
 To deploy the lambda function, run the following command:
 
 ```bash
+cd terraform
 terraform apply
 ```
 This will create the necessary AWS resources and deploy the lambda function.
