@@ -44,5 +44,5 @@ resource "aws_lambda_permission" "investment_permission" {
 }
 
 output "url" {
-  value = "https://${aws_api_gateway_rest_api.investment_api.id}.execute-api.${var.region}.amazonaws.com/${aws_api_gateway_deployment.investment_deployment.stage_name}"
+  value = "https://${aws_api_gateway_rest_api.investment_api.id}.execute-api.${var.region}.amazonaws.com/${aws_api_gateway_deployment.investment_deployment.stage_name}/${aws_api_gateway_resource.investment_resource.path_part}"
 }
