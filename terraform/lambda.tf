@@ -1,6 +1,6 @@
 data "archive_file" "lambda_zip" {
   type        = "zip"
-  source_file = "../lambda/dist/index.js"
+  source_dir = "../lambda/dist"
   output_path = "lambda_function.zip"
 }
 
@@ -37,4 +37,9 @@ resource "aws_lambda_function" "investment_api_lambda" {
 resource "aws_iam_role_policy_attachment" "lambda_exec_policy_attachment" {
   role       = aws_iam_role.lambda_exec.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+}
+
+resource "aws_cloudwatch_log_group" "investment_api_lambda_log_group" {
+  name              = "/aws/lambda/investment_api_lambda"
+  retention_in_days = 14
 }

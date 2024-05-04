@@ -6,7 +6,7 @@ resource "aws_api_gateway_rest_api" "investment_api" {
 resource "aws_api_gateway_resource" "investment_resource" {
   rest_api_id = aws_api_gateway_rest_api.investment_api.id
   parent_id   = aws_api_gateway_rest_api.investment_api.root_resource_id
-  path_part   = "{proxy+}"
+  path_part   = "investment_value"
 }
 
 resource "aws_api_gateway_method" "investment_method" {
@@ -21,7 +21,7 @@ resource "aws_api_gateway_integration" "investment_integration" {
   resource_id = aws_api_gateway_resource.investment_resource.id
   http_method = aws_api_gateway_method.investment_method.http_method
 
-  integration_http_method = "GET"
+  integration_http_method = "POST"
   type                    = "AWS_PROXY"
   uri                     = aws_lambda_function.investment_api_lambda.invoke_arn
 }
