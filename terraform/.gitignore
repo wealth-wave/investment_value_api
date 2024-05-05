@@ -4,5 +4,6 @@
 *.tfstate.*
 *.tfvars
 *.tfvars.*
+.env.sh
 crash.log
 lambda_function.zip
