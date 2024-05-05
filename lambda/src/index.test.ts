@@ -4,12 +4,26 @@ import axios from 'axios';
 import { handler } from './index';
 
 jest.mock('axios');
+jest.mock('aws-sdk', () => {
+  return {
+    SecretsManager: jest.fn(() => ({
+      getSecretValue: jest.fn().mockImplementation((params) => {
+        return {
+          promise: jest.fn().mockResolvedValue({ SecretString: 'test-api-key' }),
+        };
+      }),
+    })),
+  };
+});
 
 const ctx = context();
 
 describe('handler', () => {
 
   beforeEach(() => {
+  });
+
+  afterEach(() => {
     jest.clearAllMocks();
   });
 
@@ -33,6 +47,44 @@ describe('handler', () => {
 
       const body = JSON.parse(result.body);
       expect(body).toEqual({ value: 123.45 });
+    } else {
+      fail('Expected a result but received void');
+    }
+  });
+
+  it('returns the investment value for a valid US stock', async () => {
+    const mockedStockResponse = {
+      data: {
+        'Global Quote': {
+          '05. price': '150.00'
+        }
+      }
+    };
+    const mockedExchangeResponse = {
+      data: {
+        'Realtime Currency Exchange Rate': {
+          '5. Exchange Rate': '75.00'
+        }
+      }
+    };
+    jest.spyOn(axios, 'get').mockResolvedValueOnce(mockedStockResponse).mockResolvedValueOnce(mockedExchangeResponse);
+
+    const event: Partial<APIGatewayProxyEvent> = {
+      queryStringParameters: {
+        investment_code: 'AAPL',
+        investment_source: 'stock_us'
+      },
+      body: JSON.stringify({})
+    };
+
+    const result: APIGatewayProxyResult | void = await handler(event as APIGatewayProxyEvent, ctx, () => { return; });
+    if (result) {
+      expect(result.statusCode).toBe(200);
+      expect(result.headers).toHaveProperty('Content-Type', 'application/json');
+      expect(typeof result.body).toBe('string');
+
+      const body = JSON.parse(result.body);
+      expect(body).toEqual({ value: 150.00 * 75.00 }); // Check the returned investment value
     } else {
       fail('Expected a result but received void');
     }
