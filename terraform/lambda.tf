@@ -43,3 +43,25 @@ resource "aws_cloudwatch_log_group" "investment_api_lambda_log_group" {
   name              = "/aws/lambda/investment_api_lambda"
   retention_in_days = 14
 }
+
+resource "aws_iam_policy" "secretsmanager_getsecretvalue" {
+  name        = "secretsmanager_getsecretvalue"
+  description = "Allows GetSecretValue action on Secrets Manager"
+  policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": "secretsmanager:GetSecretValue",
+      "Resource": "${aws_secretsmanager_secret.alpha_vantage_api_key_1.arn}"
+    }
+  ]
+}
+EOF
+}
+
+resource "aws_iam_role_policy_attachment" "lambda_exec_secretsmanager_getsecretvalue" {
+  role       = aws_iam_role.lambda_exec.name
+  policy_arn = aws_iam_policy.secretsmanager_getsecretvalue.arn
+}

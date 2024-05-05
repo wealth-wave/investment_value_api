@@ -3,6 +3,7 @@ import context from 'aws-lambda-mock-context';
 import axios from 'axios';
 import { handler } from './index';
 
+jest.useFakeTimers();
 jest.mock('axios');
 jest.mock('aws-sdk', () => {
   return {
@@ -27,7 +28,7 @@ describe('handler', () => {
     jest.clearAllMocks();
   });
 
-  it('returns the investment value for a valid investment source', async () => {
+  it('returns the investment value for a indian mutual fund', async () => {
     const mockedResponse = { data: { data: [{ nav: 123.45 }] } };
     jest.spyOn(axios, 'get').mockResolvedValueOnce(mockedResponse);
 
@@ -85,6 +86,30 @@ describe('handler', () => {
 
       const body = JSON.parse(result.body);
       expect(body).toEqual({ value: 150.00 * 75.00 }); // Check the returned investment value
+    } else {
+      fail('Expected a result but received void');
+    }
+  });
+
+  it('returns the investment value for gold', async () => {
+    const mockedResponse = { data: { price: 123.45 } };
+    jest.spyOn(axios, 'get').mockResolvedValueOnce(mockedResponse);
+
+    const event: Partial<APIGatewayProxyEvent> = {
+      queryStringParameters: {
+        investment_source: 'gold'
+      },
+      body: JSON.stringify({})
+    };
+
+    const result: APIGatewayProxyResult | void = await handler(event as APIGatewayProxyEvent, ctx, () => { return; });
+    if (result) {
+      expect(result.statusCode).toBe(200);
+      expect(result.headers).toHaveProperty('Content-Type', 'application/json');
+      expect(typeof result.body).toBe('string');
+
+      const body = JSON.parse(result.body);
+      expect(body).toEqual({ value: 123.45 });
     } else {
       fail('Expected a result but received void');
     }

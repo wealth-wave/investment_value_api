@@ -5,7 +5,7 @@
     "main": "index.ts",
     "scripts": {
         "lint": "tslint -p tsconfig.json",
-        "release": "npm install --production && tsc --outDir dist && ncp node_modules dist/node_modules",
+        "release": "rm -rf dist && npm install && tsc --outDir dist && cp package*.json dist/ && npm install --production --prefix dist",
         "test": "jest ./src",
         "coverage": "jest --coverage ./src"
     },

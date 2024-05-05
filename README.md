@@ -4,20 +4,13 @@ This project contains a lambda function to fetch investment values from differen
 
 ## Setup
 
-1. Rename `env.sh.template` to `env.sh` and update it with your actual secret keys.
-
-```bash
-cd lambda
-tsc index.ts
-```
-
+1. Rename `.env.template` to `.env` and update it with your actual secret keys.
 
 ## Deployment
 To deploy the lambda function, run the following command:
 
 ```bash
-cd terraform
-terraform apply
+npm --prefix ./lambda run release && source .env && terraform -chdir=terraform apply
 ```
 This will create the necessary AWS resources and deploy the lambda function.
 
@@ -26,7 +19,5 @@ You can invoke the lambda function with an HTTP GET request. The request should 
 
 For example:
 ```bash
-curl "https://your-api-gateway-url.com/prod?investment_code=abc&investment_source=source1&investment_type=type1"
+curl "https://your-api-gateway-url.com/prod/investment_api?investment_code=abc&investment_source=source1"
 ```
-
-Replace "https://your-api-gateway-url.com/prod" with your actual API Gateway URL.
