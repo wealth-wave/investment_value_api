@@ -1,6 +1,6 @@
 data "archive_file" "lambda_zip" {
   type        = "zip"
-  source_dir = "../lambda/dist"
+  source_dir  = "../lambda/dist"
   output_path = "lambda_function.zip"
 }
 
@@ -47,14 +47,17 @@ resource "aws_cloudwatch_log_group" "investment_api_lambda_log_group" {
 resource "aws_iam_policy" "secretsmanager_getsecretvalue" {
   name        = "secretsmanager_getsecretvalue"
   description = "Allows GetSecretValue action on Secrets Manager"
-  policy = <<EOF
+  policy      = <<EOF
 {
   "Version": "2012-10-17",
   "Statement": [
     {
       "Effect": "Allow",
       "Action": "secretsmanager:GetSecretValue",
-      "Resource": "${aws_secretsmanager_secret.alpha_vantage_api_key_1.arn}"
+      "Resource": [
+        "${aws_secretsmanager_secret.alpha_vantage_api_key_1.arn}",
+        "${aws_secretsmanager_secret.gold_api_key.arn}"
+        ]
     }
   ]
 }

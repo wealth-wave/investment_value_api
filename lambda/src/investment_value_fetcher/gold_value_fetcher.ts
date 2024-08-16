@@ -13,6 +13,6 @@ export default class GoldValueFetcher implements InvestmentValueFetcher {
                 'x-access-token': apiKey
             }
         });
-        return response.data['price'];
+        return response.data['price_gram_24k'];
     }
 }
